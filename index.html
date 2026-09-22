@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Hachibito — 8BitDo Micro 키 매핑</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="style.css?v=5.1.0" />
+  <script>
+    // ?mock=1 → 실기기 대신 가짜 Micro로 동작 (UI 테스트/데모용)
+    if (new URLSearchParams(location.search).has('mock')) {
+      document.write('<script src="dev/mock-device.js?v=5.1.0"><\/script>');
+    }
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mark" title="Hachibito"><span></span><span></span><span></span></div>
+
+      <nav class="nav">
+        <button class="nav-item" data-tab="profile" title="Profile">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v13H4zM7 9h10M7 12.5h7M7 16h5"/></svg>
+          <span>Profile</span>
+        </button>
+        <button class="nav-item active" data-tab="buttons" title="Buttons">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="2.2"/><circle cx="12" cy="18.5" r="2.2"/><circle cx="5.5" cy="12" r="2.2"/><circle cx="18.5" cy="12" r="2.2"/></svg>
+          <span>Buttons</span>
+        </button>
+        <button class="nav-item" data-tab="settings" title="Settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.7 3.4 10.3 2h3.4l.6 1.4 1.6.7 1.4-.6 2.4 2.4-.6 1.4.7 1.6 1.4.6v3.4l-1.4.6-.7 1.6.6 1.4-2.4 2.4-1.4-.6-1.6.7-.6 1.4h-3.4L9.7 20l-1.6-.7-1.4.6-2.4-2.4.6-1.4-.7-1.6-1.4-.6v-3.4l1.4-.6.7-1.6-.6-1.4 2.4-2.4 1.4.6z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <button id="deviceButton" class="device-button" title="장치 연결 / 해제">
+        <svg viewBox="0 0 34 20" aria-hidden="true">
+          <rect x="1.5" y="3" width="31" height="15" rx="7.5" class="dev-body"/>
+          <path d="M6 10.5h6M9 7.5v6" class="dev-mark"/>
+          <circle cx="24" cy="8.5" r="1.6" class="dev-dot"/><circle cx="27.5" cy="12" r="1.6" class="dev-dot"/>
+        </svg>
+        <span id="deviceDot" class="device-dot"></span>
+      </button>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <div class="top-title"><span id="topTitle">Buttons</span> <span class="version-badge">v5.1</span></div>
+          <div class="top-subtitle" id="topSubtitle">8BitDo Micro · K mode</div>
+        </div>
+        <div class="top-actions">
+          <div id="verifiedBadge" class="verified-badge hidden">✓ Verified</div>
+          <button id="connectButton" class="btn primary">Micro 연결</button>
+          <button id="readButton" class="btn" disabled>다시 읽기</button>
+        </div>
+      </header>
+
+      <section id="tab-buttons" class="tab-panel active">
+        <div class="mapper-stage" id="mapperStage">
+          <svg id="leaderLines" class="leader-lines" aria-hidden="true"></svg>
+
+          <div class="mapping-column left" id="leftMappings"></div>
+
+          <div class="stage-notices">
+              <div id="controllerStatus" class="controller-status">연결 후 현재 매핑을 읽습니다</div>
+              <div id="pendingBanner" class="pending-banner hidden">
+                <span id="pendingText">저장 안 된 편집이 있습니다</span>
+                <button id="pendingRestore" class="btn tiny primary">이어서 편집</button>
+                <button id="pendingDiscard" class="btn tiny">버리기</button>
+              </div>
+          </div>
+
+          <div class="controller-stage">
+            <svg id="controllerSvg" class="controller-svg" viewBox="0 0 460 290" role="img" aria-label="Micro 컨트롤러 — 버튼을 눌러 매핑 편집">
+              <defs>
+                <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#5b79f3"/>
+                  <stop offset="1" stop-color="#3d59d6"/>
+                </linearGradient>
+                <linearGradient id="gWhite" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/>
+                  <stop offset="1" stop-color="#dcdee4"/>
+                </linearGradient>
+                <linearGradient id="gShoulder" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f7f7f9"/>
+                  <stop offset="1" stop-color="#c8cad1"/>
+                </linearGradient>
+                <linearGradient id="gShoulder2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#e4e5ea"/>
+                  <stop offset="1" stop-color="#b3b6be"/>
+                </linearGradient>
+                <filter id="fDrop" x="-20%" y="-20%" width="140%" height="160%">
+                  <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000" flood-opacity=".55"/>
+                </filter>
+                <filter id="fBtn" x="-30%" y="-30%" width="160%" height="170%">
+                  <feDropShadow dx="0" dy="2.5" stdDeviation="1.6" flood-color="#0b1a5c" flood-opacity=".45"/>
+                </filter>
+              </defs>
+
+              <!-- 어깨 버튼 (몸체 뒤) -->
+              <g class="hw" data-button="l2" data-ax="166" data-ay="30"><rect class="cap" x="146" y="22" width="40" height="34" rx="7" fill="url(#gShoulder2)"/></g>
+              <g class="hw" data-button="l"  data-ax="92"  data-ay="33"><rect class="cap" x="40" y="27" width="104" height="36" rx="10" fill="url(#gShoulder)"/></g>
+              <g class="hw" data-button="r2" data-ax="294" data-ay="30"><rect class="cap" x="274" y="22" width="40" height="34" rx="7" fill="url(#gShoulder2)"/></g>
+              <g class="hw" data-button="r"  data-ax="368" data-ay="33"><rect class="cap" x="316" y="27" width="104" height="36" rx="10" fill="url(#gShoulder)"/></g>
+
+              <!-- 몸체 -->
+              <rect id="ctrlBody" x="10" y="40" width="440" height="240" rx="80" fill="url(#gBody)" filter="url(#fDrop)"/>
+              <rect x="12" y="42" width="436" height="236" rx="78" fill="none" stroke="#ffffff" stroke-opacity=".14" stroke-width="2"/>
+              <circle cx="230" cy="105" r="2.6" fill="#1f2f7a"/>
+              <path d="M209 158h42" stroke="#ffffff" stroke-opacity=".28" stroke-width="1.5" stroke-linecap="round"/>
+
+              <!-- 십자키 -->
+              <g transform="translate(113 157)">
+                <path d="M-20-58h40v38h38v40h-38v38h-40v-38h-38v-40h38z" fill="url(#gWhite)" stroke="#b9bcc6" stroke-width="1.2" stroke-linejoin="round" filter="url(#fBtn)"/>
+                <g fill="#b4b8c2">
+                  <path d="M0-46l5 8h-10z"/><path d="M0 46l5-8h-10z"/>
+                  <path d="M-46 0l8-5v10z"/><path d="M46 0l-8-5v10z"/>
+                </g>
+                <g class="hw" data-button="up"    data-ax="113" data-ay="118"><rect class="dpad-seg" x="-20" y="-58" width="40" height="38" rx="3"/></g>
+                <g class="hw" data-button="down"  data-ax="113" data-ay="196"><rect class="dpad-seg" x="-20" y="20"  width="40" height="38" rx="3"/></g>
+                <g class="hw" data-button="left"  data-ax="74"  data-ay="157"><rect class="dpad-seg" x="-58" y="-20" width="38" height="40" rx="3"/></g>
+                <g class="hw" data-button="right" data-ax="152" data-ay="157"><rect class="dpad-seg" x="20"  y="-20" width="38" height="40" rx="3"/></g>
+              </g>
+
+              <!-- − / + -->
+              <g class="hw" data-button="minus" data-ax="185" data-ay="105" data-ar="14">
+                <circle class="cap blue-cap" cx="185" cy="105" r="14"/>
+                <path d="M178 105h14" class="glyph"/>
+              </g>
+              <g class="hw" data-button="plus" data-ax="274" data-ay="105" data-ar="14">
+                <circle class="cap blue-cap" cx="274" cy="105" r="14"/>
+                <path d="M267 105h14M274 98v14" class="glyph"/>
+              </g>
+
+              <!-- ★ / ♥ -->
+              <g class="hw" data-button="star" data-ax="202" data-ay="210" data-ar="17">
+                <circle class="cap blue-cap" cx="202" cy="210" r="17"/>
+                <path d="m202 199.5 3.1 6.4 7 1-5.1 4.9 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5.1-4.9 7-1z" class="glyph-fill"/>
+              </g>
+              <g class="hw" data-button="logo" data-ax="257" data-ay="210" data-ar="17">
+                <circle class="cap blue-cap" cx="257" cy="210" r="17"/>
+                <g class="glyph-fill">
+                  <rect x="249.0" y="200.4" width="3.2" height="3.2" opacity=".5"/><rect x="252.2" y="200.4" width="3.2" height="3.2"/><rect x="258.6" y="200.4" width="3.2" height="3.2"/><rect x="261.8" y="200.4" width="3.2" height="3.2" opacity=".5"/><rect x="245.8" y="203.6" width="3.2" height="3.2" opacity=".5"/><rect x="249.0" y="203.6" width="3.2" height="3.2"/><rect x="252.2" y="203.6" width="3.2" height="3.2" opacity=".5"/><rect x="255.4" y="203.6" width="3.2" height="3.2"/><rect x="258.6" y="203.6" width="3.2" height="3.2" opacity=".5"/><rect x="261.8" y="203.6" width="3.2" height="3.2"/><rect x="265.0" y="203.6" width="3.2" height="3.2" opacity=".5"/><rect x="245.8" y="206.8" width="3.2" height="3.2"/><rect x="249.0" y="206.8" width="3.2" height="3.2" opacity=".5"/><rect x="252.2" y="206.8" width="3.2" height="3.2"/><rect x="255.4" y="206.8" width="3.2" height="3.2" opacity=".5"/><rect x="258.6" y="206.8" width="3.2" height="3.2"/><rect x="261.8" y="206.8" width="3.2" height="3.2" opacity=".5"/><rect x="265.0" y="206.8" width="3.2" height="3.2"/><rect x="249.0" y="210.0" width="3.2" height="3.2"/><rect x="252.2" y="210.0" width="3.2" height="3.2" opacity=".5"/><rect x="255.4" y="210.0" width="3.2" height="3.2"/><rect x="258.6" y="210.0" width="3.2" height="3.2" opacity=".5"/><rect x="261.8" y="210.0" width="3.2" height="3.2"/><rect x="252.2" y="213.2" width="3.2" height="3.2"/><rect x="255.4" y="213.2" width="3.2" height="3.2" opacity=".5"/><rect x="258.6" y="213.2" width="3.2" height="3.2"/><rect x="255.4" y="216.4" width="3.2" height="3.2"/>
+                </g>
+              </g>
+
+              <!-- 페이스 버튼 -->
+              <g class="hw" data-button="x" data-ax="344" data-ay="110" data-ar="22"><circle class="cap face" cx="344" cy="110" r="22"/><text x="344" y="110" class="face-label">X</text></g>
+              <g class="hw" data-button="y" data-ax="298" data-ay="157" data-ar="22"><circle class="cap face" cx="298" cy="157" r="22"/><text x="298" y="157" class="face-label">Y</text></g>
+              <g class="hw" data-button="a" data-ax="390" data-ay="158" data-ar="22"><circle class="cap face" cx="390" cy="158" r="22"/><text x="390" y="158" class="face-label">A</text></g>
+              <g class="hw" data-button="b" data-ax="344" data-ay="204" data-ar="22"><circle class="cap face" cx="344" cy="204" r="22"/><text x="344" y="204" class="face-label">B</text></g>
+            </svg>
+
+            <label class="stage-sleep" title="자동 절전 끄기 (offset 0x03)">
+              <span>Disable Sleep</span>
+              <span class="switch"><input id="stageSleepToggle" type="checkbox" disabled /><span></span></span>
+            </label>
+          </div>
+
+          <div class="mapping-column right" id="rightMappings"></div>
+        </div>
+
+        <div class="bottom-bar">
+          <div class="connection-copy">
+            <span id="connectionIcon" class="connection-icon off"></span>
+            <div>
+              <strong id="connectionText">연결 안 됨</strong>
+              <small id="connectionDetail">Micro를 K 모드로 두고 연결하세요.</small>
+            </div>
+          </div>
+          <div class="bottom-actions">
+            <button id="resetDraftButton" class="footer-button" disabled><span aria-hidden="true">↶</span> Reset</button>
+            <button id="syncButton" class="footer-button sync" disabled><span aria-hidden="true">↻</span> Sync to Micro</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-profile" class="tab-panel">
+        <div class="page-stack">
+          <div class="page-card">
+            <div class="card-heading">
+              <div>
+                <h2>프리셋</h2>
+                <p>적용하면 화면의 매핑만 바뀝니다. Micro에 넣으려면 Buttons에서 <b>Sync to Micro</b>를 누르세요.</p>
+              </div>
+            </div>
+            <div id="presetsList" class="presets-list"></div>
+          </div>
+
+          <div class="page-card">
+            <div class="card-heading">
+              <div>
+                <h2>원래대로 되돌리기</h2>
+                <p>처음 연결했을 때의 설정, 또는 Sync 직전마다 자동으로 남긴 백업으로 되돌립니다. 버튼 매핑과 Disable Sleep만 바뀌고, 역시 <b>Sync to Micro</b>를 눌러야 저장됩니다.</p>
+              </div>
+            </div>
+            <div id="restoreList" class="presets-list"></div>
+          </div>
+
+          <div class="page-card">
+            <div class="card-heading">
+              <div>
+                <h2>내 프로필</h2>
+                <p>현재 버튼 구성을 이 브라우저에 저장하거나 JSON 파일로 옮길 수 있습니다.</p>
+              </div>
+              <button id="newProfileButton" class="btn primary">현재 구성을 프로필로 저장</button>
+            </div>
+
+            <div id="profilesList" class="profiles-list"></div>
+
+            <div class="profile-tools">
+              <label class="btn file-button">
+                JSON 프로필 불러오기
+                <input id="profileImportInput" type="file" accept=".json,application/json" />
+              </label>
+              <button id="profileExportButton" class="btn" disabled>현재 구성 JSON 내보내기</button>
+              <button id="rawBackupButton" class="btn" disabled>Raw 180B 백업 다운로드</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-settings" class="tab-panel">
+        <div class="settings-grid">
+          <div class="page-card">
+            <h2>Controller</h2>
+            <div class="setting-row">
+              <div>
+                <strong>Disable auto sleep</strong>
+                <small>확인된 설정 값(0/1)일 때만 변경할 수 있습니다.</small>
+              </div>
+              <label class="switch">
+                <input id="sleepToggle" type="checkbox" disabled />
+                <span></span>
+              </label>
+            </div>
+            <div class="setting-row">
+              <div>
+                <strong>Mode</strong>
+                <small>이 도구는 K(Keyboard) 모드만 지원합니다.</small>
+              </div>
+              <span class="value-chip">K</span>
+            </div>
+          </div>
+
+          <div class="page-card storage-card">
+            <h2>브라우저 저장</h2>
+            <p>프로필·백업·마지막 매핑은 이 브라우저에만 저장됩니다(서버 전송 없음). 다른 PC나 브라우저로 옮기려면 파일로 내보낸 뒤 거기서 불러오세요.</p>
+            <dl class="diagnostics">
+              <div><dt>마지막 읽기</dt><dd id="diagCached">—</dd></div>
+              <div><dt>처음 상태 기록</dt><dd id="diagOriginal">—</dd></div>
+              <div><dt>자동 백업</dt><dd id="diagBackups">—</dd></div>
+              <div><dt>내 프로필</dt><dd id="diagProfiles">—</dd></div>
+              <div><dt>Sync 안 한 편집</dt><dd id="diagPending">—</dd></div>
+            </dl>
+            <div class="profile-tools">
+              <button id="exportDataButton" class="btn primary">전체 데이터 내보내기</button>
+              <label class="btn file-button">
+                데이터 파일 불러오기
+                <input id="importDataInput" type="file" accept=".json,application/json" />
+              </label>
+              <div class="spacer"></div>
+              <button id="clearStorageButton" class="btn">마지막 매핑·편집 지우기</button>
+            </div>
+          </div>
+
+          <div class="page-card">
+            <h2>BLE diagnostics</h2>
+            <dl class="diagnostics">
+              <div><dt>Device</dt><dd id="diagDevice">—</dd></div>
+              <div><dt>Service</dt><dd>FF10</dd></div>
+              <div><dt>Write characteristic</dt><dd id="diagWrite">—</dd></div>
+              <div><dt>Notify characteristic</dt><dd id="diagNotify">—</dd></div>
+              <div><dt>Config</dt><dd id="diagConfig">—</dd></div>
+            </dl>
+          </div>
+
+          <div class="page-card log-card">
+            <div class="card-heading">
+              <div>
+                <h2>Operation log</h2>
+                <p>연결 문제가 생기면 이 로그를 그대로 보내주면 됩니다.</p>
+              </div>
+              <button id="copyLogButton" class="btn">로그 복사</button>
+            </div>
+            <pre id="log"></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="mappingModal" class="modal-backdrop hidden">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <div class="modal-kicker">BUTTON MAPPING</div>
+          <h3 id="modalTitle">A</h3>
+        </div>
+        <button id="modalClose" class="icon-button" aria-label="닫기">×</button>
+      </div>
+
+      <div class="current-preview">
+        <span>현재</span>
+        <strong id="modalCurrent">—</strong>
+        <code id="modalRaw" title="장치에 저장된 원본 4바이트">—</code>
+      </div>
+
+      <label class="field-label" for="keySelect">Key</label>
+      <select id="keySelect" class="key-select"></select>
+
+      <div class="modifier-title">Modifiers</div>
+      <div class="modifier-grid">
+        <label><input type="checkbox" id="modCtrl"><span>Ctrl</span></label>
+        <label><input type="checkbox" id="modShift"><span>Shift</span></label>
+        <label><input type="checkbox" id="modAlt"><span>Alt</span></label>
+        <label><input type="checkbox" id="modMeta"><span>Win</span></label>
+      </div>
+
+      <button id="captureButton" class="capture-button">
+        <strong>키 조합을 직접 누르기</strong>
+        <span id="captureHint">클릭한 뒤 키보드에서 예: Ctrl + S</span>
+      </button>
+
+      <div class="modal-actions">
+        <button id="disableMappingButton" class="btn">Disabled</button>
+        <div class="spacer"></div>
+        <button id="modalCancel" class="btn">취소</button>
+        <button id="modalApply" class="btn primary">적용</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js?v=5.1.0"></script>
+</body>
+</html>

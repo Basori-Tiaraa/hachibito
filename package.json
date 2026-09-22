@@ -1,0 +1,14 @@
+{
+  "name": "hachibito",
+  "version": "5.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Unofficial Web Bluetooth key remapper for the 8BitDo Micro (K mode)",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "serve": "node tests/static-server.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}
